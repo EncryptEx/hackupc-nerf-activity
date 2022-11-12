@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nerf Activity</title>
+    <style>
+        .video-foreground {
+            background: #000;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: -99;
+        }
+
+        .video-foreground,
+        .video-background iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        div.video-foreground {
+            position: fixed;
+            z-index: -99999;
+            -webkit-user-select: none;
+            user-select: none;
+            width: 100%;
+            height: 100%;
+            -ms-transform: scale(1.3, 1.3);
+            -webkit-transform: scale(1.3, 1.3);
+            transform: scale(1.3, 1.3);
+        }
+
+        .team1 {
+            background-color: #e02d00;
+        }
+
+        .team2 {
+            background-color: #0082b9;
+        }
+
+        .time {
+            background-color: #000;
+        }
+
+        .time {
+            min-height: 100px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 60px;
+            position: relative;
+            width: 15%;
+            color: white;
+        }
+
+        .teams {
+            min-height: 100px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 60px;
+            position: relative;
+            width: 35%;
+        }
+
+        .team1 {
+            flex-grow: 2;
+            margin-right: 80px;
+            display: flex;
+            justify-content: space-evenly;
+        }
+
+        .team2 {
+            flex-grow: 2;
+            margin-left: 80px;
+            display: flex;
+            justify-content: space-evenly;
+        }
+
+        .time {
+            flex-grow: 1;
+            display: flex;
+            justify-content: space-between;
+            vertical-align: middle;
+        }
+
+        #countdowntimer {
+            padding-top: 15px;
+            flex-grow: 1;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .team1:after,
+        .team2:before,
+        .time:before,
+        .time:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .team1:after {
+            left: 100%;
+            border-top: 100px solid #e02d00;
+            border-right: 50px solid transparent;
+        }
+
+        .time:before {
+            right: 100%;
+            border-bottom: 100px solid black;
+            border-left: 50px solid transparent;
+        }
+
+        .time:after {
+            left: 100%;
+            border-top: 100px solid black;
+            border-right: 50px solid transparent;
+        }
+
+        .team2:before {
+            right: 100%;
+            border-bottom: 100px solid #0082b9;
+            border-left: 50px solid transparent;
+        }
+
+        button {
+            background-color: transparent;
+            border: none;
+            width: 100px;
+            /* padding: 40px; */
+            font-size: 50px;
+        }
+
+        a {
+            text-decoration: none;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="video-foreground">
+        <iframe width="100%" height="100%"
+            src="https://www.youtube-nocookie.com/embed/oJrIPdt47Uk?autoplay=1&controls=0&mute=1" frameborder="0"
+            allow="autoplay; encrypted-media;" allowfullscreen></iframe>
+    </div>
+    <div class="row">
+        <div class="teams team1">
+            <button class="point" id="red1" onclick="toggle(this)">.</button>
+            <button class="point" id="red2" onclick="toggle(this)">.</button>
+            <!-- <button class="point" id="red3" onclick="toggle(this)">.</button> -->
+        </div>
+        <div class="time">
+            <a href="javascript:reset()" id="countdowntimer">2:00</a>
+
+            <script type="text/javascript">
+                var timedefault = 2 * 60;
+                var timeleft = timedefault;
+
+                var audio;
+
+                //added this next 4 lines for the link
+                function intervalManager(flag, time) {
+                    if (flag) {
+                        intervalID = setInterval(function () {
+                            timeleft--;
+                            document.getElementById("countdowntimer").textContent =
+                                parseInt(timeleft / 60) + ":" + addLeadingZeros(timeleft % 60, 2);
+                            if (timeleft <= 0) {
+                                clearInterval(intervalID);
+                                audio = new Audio('alarm.mp3');
+                                document.getElementById("countdowntimer").innerHTML = "0:00";
+                                audio.loop = false;
+                                audio.play();
+
+                            }
+                        }, 1000);
+                    } else {
+                        if(audio != null){
+                            audio.pause();
+                            audio.currentTime = 0;
+                        }
+                            
+                        clearInterval(intervalID);
+                    }
+                }
+                var downloadTimer = intervalManager(true, 1000);
+                function addLeadingZeros(num, totalLength) {
+                    return String(num).padStart(totalLength, "0");
+                }
+
+            </script>
+        </div>
+        <div class="teams team2">
+            <button class="point" id="blue1" onclick="toggle(this)">.</button>
+            <button class="point" id="blue2" onclick="toggle(this)">.</button>
+            <!-- <button class="point" id="blue3" onclick="toggle(this)">.</button> -->
+        </div>
+    </div>
+    <script defer>
+        var arrayOfelements = [];
+        function toggle(element) {
+            if (arrayOfelements[element.id] == undefined) {
+                arrayOfelements[element.id] = "X";
+            } else {
+                if (arrayOfelements[element.id] == "X") {
+                    arrayOfelements[element.id] = ".";
+                } else {
+                    arrayOfelements[element.id] = "X";
+                }
+            }
+            element.textContent = arrayOfelements[element.id];
+        }
+
+        function reset() {
+            downloadTimer = intervalManager(false, 1000);
+            timeleft = timedefault;
+            downloadTimer = intervalManager(true, 1000);
+        }
+    </script>
+</body>
+
+</html>
